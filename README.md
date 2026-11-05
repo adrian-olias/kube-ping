@@ -10,8 +10,13 @@ Plain Node.js with no dependencies, running on a distroless image.
 
 | Route | What it does |
 |---|---|
-| `GET /api/ping` | The pod that answered, the app version and `processingMs`, also sent as `Server-Timing` |
+| `GET /api/ping` | The pod that answered, the app version, `served` and `processingMs`, also sent as `Server-Timing` |
 | `GET /api/ping/deployment` | The live Deployment: ready replicas, pods, resources and probe paths |
+
+`served` counts the requests that pod answered since it started. It lives in
+the pod's memory on purpose: each replica has its own count and a restart
+resets it, so pressing the button a few times shows the requests landing on
+different pods. There is nothing to persist or share between replicas.
 | `GET /healthz` | Liveness: the process is up |
 | `GET /readyz` | Readiness: 503 while the pod shuts down |
 

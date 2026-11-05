@@ -40,8 +40,12 @@ test("GET /api/ping answers with the pod, the version and the app's time", async
   const body = await res.json();
   assert.equal(body.pod, "kube-ping-7c8d9f-x2k9p");
   assert.equal(body.version, "0.1.0");
+  assert.equal(body.served, 1);
   assert.ok(body.processingMs >= 0 && body.processingMs < 1000);
   assert.equal(res.headers.get("server-timing"), `app;dur=${body.processingMs}`);
+
+  // The pod counts every request it answers.
+  assert.equal((await (await fetch(`${base}/api/ping`)).json()).served, 2);
 });
 
 test("GET /api/ping/deployment describes the live Deployment", async () => {

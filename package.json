@@ -1,6 +1,6 @@
 {
   "name": "kube-ping",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "API behind the Kube Ping card: answers a request with the pod that served it, and describes its own Deployment.",
   "type": "module",
