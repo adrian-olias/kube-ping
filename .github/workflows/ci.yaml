@@ -1,12 +1,9 @@
 name: ci
 
-# Pull requests and main: test, then build the image (and push it from main).
-# Tags like v1.2.0: push that version for manual promotion through
-# helm-charts-wrappers.
+# Tags like v1.2.0: test, then build and push that version for manual promotion
+# through helm-charts-wrappers. Pushes to main don't run: the tag is the only release.
 on:
-  pull_request:
   push:
-    branches: [main]
     tags: ["v*"]
 
 permissions:
