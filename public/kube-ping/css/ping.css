@@ -1,0 +1,341 @@
+/* Kube Ping */
+
+.ping-demo {
+  padding-top: 2.5rem;
+  padding-bottom: 2rem;
+}
+
+.ping-card {
+  max-width: 40rem;
+  padding: 1.5rem;
+}
+
+.ping-card + .stack {
+  max-width: 40rem;
+}
+
+.ping-send {
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+}
+
+.ping-send:disabled {
+  opacity: 0.75;
+  cursor: progress;
+}
+
+/* Browser → Ingress → Service → Pod: a dot per hop and a line to the next. */
+.hops {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 1.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.hop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hop:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: calc(0.45rem - 1px);
+  left: calc(50% + 0.7rem);
+  right: calc(-50% + 0.7rem);
+  height: 2px;
+  background: var(--line);
+}
+
+.hop-dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+/* While the request is out, the hops light up one after another. It only
+   shows the path; ping.js waits for the real answer before showing numbers. */
+.hops.is-sending .hop-dot {
+  animation: hop-on 0.25s ease-out calc(var(--i) * 0.15s) both;
+}
+
+.hops.is-sending .hop::after {
+  animation: line-on 0.15s linear calc(var(--i) * 0.15s + 0.1s) both;
+}
+
+@keyframes hop-on {
+  to {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+}
+
+@keyframes line-on {
+  to {
+    background: var(--accent);
+  }
+}
+
+.hops.is-done .hop-dot {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.hops.is-done .hop::after {
+  background: var(--accent);
+}
+
+/* The pod that answered. */
+.hops.is-done .hop:last-child {
+  color: var(--fg);
+}
+
+.hops.is-done .hop:last-child .hop-dot {
+  border-color: var(--ok);
+  background: var(--ok);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 20%, transparent);
+}
+
+/* The hello travels from the browser's dot to the pod's while the path lights up. */
+.route {
+  position: relative;
+  margin-top: 2.75rem;
+}
+
+.route .hops {
+  margin-top: 0;
+}
+
+.packet {
+  position: absolute;
+  top: -1.9rem;
+  left: 12.5%;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent);
+  font-size: 0.7rem;
+  opacity: 0;
+  translate: -50% 0;
+  pointer-events: none;
+}
+
+.hops.is-sending + .packet {
+  animation: travel 0.7s ease-in-out both;
+}
+
+@keyframes travel {
+  0% {
+    left: 12.5%;
+    opacity: 0;
+  }
+
+  15%,
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 87.5%;
+    opacity: 0;
+  }
+}
+
+/* The exchange: the hello on the browser's side, the pod's reply on the other. */
+.chat {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.chat[hidden] {
+  display: none;
+}
+
+.bubble {
+  max-width: 85%;
+  margin: 0;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.bubble-out {
+  justify-self: start;
+  border-bottom-left-radius: 3px;
+  color: var(--muted);
+}
+
+.bubble-in {
+  justify-self: end;
+  border-color: color-mix(in srgb, var(--ok) 45%, var(--line));
+  border-bottom-right-radius: 3px;
+  background: color-mix(in srgb, var(--ok) 8%, var(--surface));
+  animation: fade-in 0.2s ease-out;
+}
+
+.bubble-in.is-waiting {
+  border-color: var(--line);
+  background: transparent;
+}
+
+.bubble-in.is-failed {
+  border-color: color-mix(in srgb, var(--danger) 45%, var(--line));
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+  color: var(--danger);
+}
+
+/* Three dots while the reply is on its way. */
+.typing {
+  display: inline-flex;
+  gap: 0.25rem;
+  vertical-align: middle;
+}
+
+.typing span {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: typing 0.9s ease-in-out infinite;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+  }
+
+  30% {
+    opacity: 1;
+  }
+}
+
+.ping-note {
+  margin: 1.25rem 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.ping-result .is-ok {
+  color: var(--ok);
+}
+
+.ping-result .is-failed,
+.ping-message {
+  color: var(--danger);
+}
+
+.ping-message {
+  margin: 0;
+}
+
+.ping-message:empty {
+  display: none;
+}
+
+.deploy h2 {
+  margin: 1.5rem 0 0.6rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.deploy-pods {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.deploy-pods th,
+.deploy-pods td {
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.deploy-pods th {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.deploy-pods th:first-child {
+  width: 56%;
+}
+
+.deploy-pods th:nth-child(2) {
+  width: 18%;
+}
+
+/* Restarts is a number, so it lines up on the right like the other values. */
+.deploy-pods th:last-child,
+.deploy-pods td:last-child {
+  text-align: right;
+}
+
+.deploy-pods td {
+  padding: 0.3rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.deploy-pods th:not(:last-child),
+.deploy-pods td:not(:last-child) {
+  padding-right: 0.75rem;
+}
+
+.deploy-pods .is-ready {
+  color: var(--ok);
+}
+
+.deploy-pods .is-failed {
+  color: var(--danger);
+}
+
+.deploy-pods tr.is-served td:first-child {
+  color: var(--ok);
+}
+
+.deploy-last {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+}
+
+.deploy-last span {
+  color: var(--fg);
+}
+
+.deploy .ping-message {
+  margin-top: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hops.is-sending .hop-dot,
+  .hops.is-sending .hop::after,
+  .hops.is-sending + .packet,
+  .bubble-in,
+  .typing span {
+    animation: none;
+  }
+}

@@ -1,10 +1,21 @@
 # kube-ping
 
-API behind the Kube Ping card on the [portfolio](https://github.com/adrian-olias/portfolio).
-The card sends a request through the deployment and shows which pod answered,
-the round-trip time, the time the app spent on it, and how the Deployment is set up.
+The Kube Ping page and the API behind its card. The card sends a request through
+the deployment and shows which pod answered, the round-trip time, the time the app
+spent on it, and how the Deployment is set up.
 
-Plain Node.js with no dependencies, running on a distroless image.
+Plain Node.js with no dependencies, running on a distroless image. One container
+serves everything:
+
+- **Page** at `/kube-ping/` (English) and `/es/kube-ping/` (Spanish). Files are in
+  `public/`, under the same paths, and are copied into the image.
+- **API** at `/api/ping...` (see below).
+
+The ingress in `helm-charts-wrappers` sends `/kube-ping`, `/es/kube-ping` and `/api/ping`
+to this app. The rest of the site is the [portfolio](https://github.com/adrian-olias/portfolio).
+
+`public/kube-ping/css/` and `public/kube-ping/js/` hold copies of `base.css`,
+`panel.css` and `theme.js`: the page doesn't depend on another repository.
 
 ## Endpoints
 

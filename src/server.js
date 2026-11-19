@@ -9,6 +9,7 @@ import { createRoutes } from "./routes/index.js";
 import { createDeploymentService } from "./services/deployment.service.js";
 import { createKubernetesService, inClusterNamespace } from "./services/kubernetes.service.js";
 import { createRouter } from "./utils/http.js";
+import { createStaticHandler } from "./utils/static.js";
 
 // Logs one JSON object per line.
 const jsonLog = (fields) => console.log(JSON.stringify(fields));
@@ -25,7 +26,8 @@ export function createApp({ config, kubernetes, lifecycle = { draining: false },
     }),
   });
 
-  return createServer(createRouter(routes, { log }));
+  // Paths the API doesn't know are the page and its assets, under /kube-ping and /es/kube-ping.
+  return createServer(createRouter(routes, { log, fallback: createStaticHandler() }));
 }
 
 function start() {

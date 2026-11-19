@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kube Ping Demo · Adrian Olias</title>
+  <meta name="description" content="Saluda a un deployment de Kubernetes y mira qué pod responde, cuánto tarda y cuántas peticiones ha atendido ese pod.">
+  <script>
+    // Applies the saved light or dark choice before the first paint.
+    try {
+      const saved = localStorage.getItem("theme");
+      if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="/kube-ping/css/base.css">
+  <link rel="stylesheet" href="/kube-ping/css/panel.css">
+  <link rel="stylesheet" href="/kube-ping/css/ping.css">
+  <script src="/kube-ping/js/theme.js" defer></script>
+  <script src="/kube-ping/js/ping.js" defer></script>
+</head>
+<body>
+  <header class="site-header wrap">
+    <a class="brand" href="/es/">Adrian Olias <span class="brand-role">· DevOps Engineer</span></a>
+    <nav aria-label="Principal">
+      <a href="https://github.com/adrian-olias">GitHub</a>
+      <a href="https://www.linkedin.com/in/adriolias">LinkedIn</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" hidden
+        data-light="Cambiar a modo claro" data-dark="Cambiar a modo oscuro"></button>
+      <a class="lang" href="/kube-ping/" hreflang="en" lang="en">EN</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="ping-demo wrap" aria-labelledby="ping-title">
+      <div id="ping" class="cluster ping-card"
+        data-send="Saludar"
+        data-sending="Enviando hola…"
+        data-waiting="Esperando respuesta"
+        data-reply="¡Hola! Soy {pod}. Es mi petición n.º {n}."
+        data-reply-short="¡Hola! Soy {pod}."
+        data-failed="Sin respuesta: {reason}"
+        data-network="el servidor no contestó"
+        data-timeout="sin respuesta en 5 s"
+        data-unexpected="respuesta inesperada">
+        <h1 id="ping-title">Kube Ping</h1>
+        <p class="hint">Sigue una petición a través de mi deployment de Kubernetes.</p>
+
+        <button id="ping-send" class="button ping-send" type="button">Saludar</button>
+
+        <div class="route">
+          <ol id="ping-hops" class="hops" aria-label="Recorrido lógico de la petición">
+            <li class="hop" style="--i: 0"><span class="hop-dot" aria-hidden="true"></span>Navegador</li>
+            <li class="hop" style="--i: 1"><span class="hop-dot" aria-hidden="true"></span>Ingress</li>
+            <li class="hop" style="--i: 2"><span class="hop-dot" aria-hidden="true"></span>Service</li>
+            <li class="hop" style="--i: 3"><span class="hop-dot" aria-hidden="true"></span>Pod</li>
+          </ol>
+          <span class="packet" aria-hidden="true">hola</span>
+        </div>
+
+        <div id="ping-chat" class="chat" aria-live="polite" hidden>
+          <p class="bubble bubble-out">hola</p>
+          <p id="ping-reply" class="bubble bubble-in"></p>
+        </div>
+
+        <p class="ping-note">Recorrido lógico de la petición · Tiempos medidos en el navegador y en la aplicación.</p>
+
+        <dl class="metrics ping-result">
+          <div><dt>Respuesta</dt><dd id="ping-status">–</dd></div>
+          <div><dt>Tiempo de ida y vuelta</dt><dd id="ping-rtt">–</dd></div>
+          <div><dt>Procesamiento en la app</dt><dd id="ping-app">–</dd></div>
+          <div><dt>Versión</dt><dd id="ping-version">–</dd></div>
+          <div><dt>Peticiones enviadas</dt><dd id="ping-count">0</dd></div>
+        </dl>
+
+        <details id="ping-inspect" class="inspect">
+          <summary>Ver deployment</summary>
+          <div id="deploy" class="deploy" data-yes="Sí" data-no="No" data-offline="Información del deployment no disponible">
+            <h2>Deployment</h2>
+            <dl class="pod">
+              <dt>Nombre</dt><dd id="deploy-name">–</dd>
+              <dt>Namespace</dt><dd id="deploy-namespace">–</dd>
+              <dt>Réplicas listas</dt><dd id="deploy-ready">–</dd>
+            </dl>
+
+            <h2>Pods</h2>
+            <table class="deploy-pods">
+              <thead><tr><th scope="col">Nombre</th><th scope="col">Listo</th><th scope="col">Reinicios</th></tr></thead>
+              <tbody id="deploy-pods"></tbody>
+            </table>
+            <p class="deploy-last">Última petición atendida por: <span id="deploy-last">–</span></p>
+            <p id="deploy-status" class="ping-message" role="status"></p>
+          </div>
+        </details>
+      </div>
+
+      <div class="stack">
+        <p>Hecha con k3s, Helm y Argo CD. <a href="/es/">Volver al inicio</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer wrap">
+    <p>© 2026 Adrian Olias</p>
+  </footer>
+</body>
+</html>

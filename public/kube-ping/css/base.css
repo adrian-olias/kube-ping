@@ -1,0 +1,258 @@
+/* Shared by every page: colours, header, sections, buttons and footer. */
+
+:root {
+  --fg: #18181b;
+  --muted: #5f5f67;
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --line: #e4e4e7;
+  --accent: #0f766e;
+  --accent-fg: #ffffff;
+  --ok: #16a34a;
+  --warn: #d97706;
+  --danger: #dc2626;
+  --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+/* Light by default. The header switch sets data-theme="dark" on <html>,
+   and the choice is remembered in the browser. */
+:root[data-theme="dark"] {
+  --fg: #ededef;
+  --muted: #a1a1aa;
+  --bg: #0c0c0e;
+  --surface: #141417;
+  --line: #27272a;
+  --accent: #2dd4bf;
+  --accent-fg: #042f2e;
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --danger: #f87171;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+a:focus-visible,
+button:focus-visible,
+canvas:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.wrap {
+  max-width: 68rem;
+  margin: 0 auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+/* Header */
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.brand {
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brand-role {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.site-header nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-size: 0.95rem;
+}
+
+.site-header nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.site-header nav a:hover {
+  color: var(--fg);
+}
+
+.lang {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  border-color: var(--muted);
+  color: var(--fg);
+}
+
+/* Stays hidden without JS, since the switch does nothing without it. */
+.theme-toggle[hidden] {
+  display: none;
+}
+
+/* Sections */
+
+section {
+  padding-top: 4.5rem;
+  padding-bottom: 4.5rem;
+}
+
+section + section {
+  border-top: 1px solid var(--line);
+}
+
+h2 {
+  margin: 0 0 2rem;
+  font-size: 1.6rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  letter-spacing: -0.01em;
+}
+
+.intro {
+  max-width: 38rem;
+  margin: 0 0 2rem;
+  color: var(--muted);
+}
+
+.case-meta,
+.when {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.button {
+  display: inline-block;
+  padding: 0.7rem 1.2rem;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button.ghost {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--fg);
+}
+
+.button.ghost:hover {
+  border-color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Demo pages: title, hint and the line under the demo */
+
+h1 {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.hint {
+  margin: 0.25rem 0 0;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.stack {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.stack p {
+  margin: 0;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.site-footer {
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+@media (max-width: 40rem) {
+  .site-header nav .section-link:not([href="#experience"]),
+  .site-header nav .nav-ext,
+  .brand-role {
+    display: none;
+  }
+}

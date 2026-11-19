@@ -13,13 +13,13 @@ export function sendJson(res, status, body, headers = {}) {
 // Builds the request handler from the route table: path → method → controller.
 // Controllers get { receivedAt } (performance.now() when the request arrived)
 // and return { status, body, headers }.
-// Unknown path → 404, wrong method → 405, any error → 503.
-export function createRouter(routes, { log, clock = () => performance.now() }) {
+// Unknown path → fallback (the page files) or 404, wrong method → 405, any error → 503.
+export function createRouter(routes, { log, clock = () => performance.now(), fallback }) {
   return async (req, res) => {
     const receivedAt = clock();
     const { pathname } = new URL(req.url, "http://localhost");
     const methods = Object.hasOwn(routes, pathname) ? routes[pathname] : null;
-    if (!methods) return sendJson(res, 404, { error: "not found" });
+    if (!methods) return fallback ? fallback(req, res) : sendJson(res, 404, { error: "not found" });
 
     const controller = methods[req.method];
     if (!controller) {
